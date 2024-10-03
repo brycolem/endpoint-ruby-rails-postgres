@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 15 } %>
+  username: <%= ENV.fetch("DB_USER") { 'your_username' } %>
+  password: <%= ENV.fetch("DB_PWD") { 'your_password' } %>
+  host: <%= ENV.fetch("PG_HOST") { 'localhost' } %>
+  port: <%= ENV.fetch("PG_PORT") { 5432 } %>
+  database: <%= ENV.fetch("DATABASE") { 'bench' } %>
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 15 } %>
