@@ -13,7 +13,7 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips sqlite3 && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 libvips libpq-dev build-essential && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
@@ -58,9 +58,12 @@ RUN groupadd --system --gid 1000 rails && \
     chown -R rails:rails db log storage tmp
 USER 1000:1000
 
+RUN SECRET_KEY_BASE=$(./bin/rails secret) && echo "SECRET_KEY_BASE=$SECRET_KEY_BASE" > /tmp/env_file
+ENV SECRET_KEY_BASE $(cat /tmp/env_file | cut -d'=' -f2)
+
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
+EXPOSE 8001
 CMD ["./bin/rails", "server"]
